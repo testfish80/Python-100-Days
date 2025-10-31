@@ -16,7 +16,7 @@ jobs:
         id: find_files
         run: |
           # 查找所有 Day 开头目录下的 .md 文件, 按照目录名->文件夹名->文件名排序
-          find_output=$(find . -maxdepth 2 -type f -name "*.md" -path="./Day*" | sort)
+          find_output=$(find . -maxdepth 2 -type f -name "*.md" -path="./Day*/res" | sort)
           files=($find_output)
 
           # 构建不带 './' 前缀的 JSON 数组字符串
@@ -75,7 +75,7 @@ jobs:
           # Create a symlink to a common image directory
           mkdir -p all_images
 
-          find . -maxdepth 3 -type d -name "res" -path="./Day**/res" -print0 | while IFS= read -r -d $'\0' res_dir; do
+          find . -maxdepth 3 -type d -name "res" -path "./Day*/res" -print0 | while IFS= read -r -d $'\0' res_dir; do
             day_dir=$(dirname "$res_dir") # 获取 Day** 目录
             day_name=$(basename "$day_dir")  # 获取 Day**
 
