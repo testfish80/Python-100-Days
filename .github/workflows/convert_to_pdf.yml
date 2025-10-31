@@ -16,7 +16,7 @@ jobs:
         id: find_files
         run: |
           # 查找所有 Day 开头目录下的 .md 文件, 按照目录名->文件夹名->文件名排序
-          find_output=$(find . -maxdepth 2 -type f -name "*.md" -path "./Day*" | sort)
+          find_output=$(find . -maxdepth 2 -type f -name "*.md" -path="./Day*" | sort)
           files=($find_output)
 
           # 构建不带 './' 前缀的 JSON 数组字符串
@@ -47,6 +47,14 @@ jobs:
           sudo apt-get install texlive-xetex # Required for PDF generation with Chinese characters and correct font handling
           sudo apt-get install texlive-latex-extra  # Install additional LaTeX packages
           sudo apt-get install fonts-wqy-zenhei # Install WenQuanYi Zen Hei font
+
+          # 获取默认模板并保存到 custom.tex
+          pandoc -D latex > custom.tex
+
+          # 修改 custom.tex 中的字体大小和对齐方式 (例如，使用 sed 替换)
+          sed -i 's/\\documentclass\[\]\{article\}/\\documentclass\[12pt]\{extarticle\}/g' custom.tex
+          sed -i '/\\begin\{document\}/i\\usepackage\{ragged2e\}\\RaggedRight' custom.tex
+          sed -i '/\\documentclass\[12pt]\{extarticle\}/a\\usepackage\{url\}\\usepackage\{hyperref\}' custom.tex
 
       - name: Install pandoc-crossref
         run: |
@@ -92,9 +100,10 @@ jobs:
                  --metadata title="Combined Documentation" \
                  --resource-path="./all_images" \
                  --pdf-engine=xelatex \
-                 --from markdown \
+                 --from markdown+raw_html \
                  --filter pandoc-crossref \
                  --variable mainfont="WenQuanYi Zen Hei" \
+                 --template custom.tex \
                  --output combined.pdf Day01-20/01.初识Python.md
 
       - name: Upload Artifact
