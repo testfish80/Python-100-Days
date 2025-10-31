@@ -66,10 +66,20 @@ jobs:
         run: |
           # Create a symlink to a common image directory
           mkdir -p all_images
-          find . -maxdepth 2 -type d -name "day" -path "./Day**/res/day" -print0 | while IFS= read -r -d $'\0' dir; do
-            day_dir=$(dirname "$(dirname "$dir")") # 获取 Day**/res 目录
-            day_name=$(basename "$day_dir")        # 获取 Day**
-            ln -s "$dir" "all_images/${day_name}_day" # 创建符号链接，名称为 Day**_day
+
+          find . -maxdepth 3 -type d -name "res" -path "./Day**/res" -print0 | while IFS= read -r -d $'\0' res_dir; do
+            day_dir=$(dirname "$res_dir") # 获取 Day** 目录
+            day_name=$(basename "$day_dir")  # 获取 Day**
+
+            # 处理 Day**/res/day 路径
+            day_res_day_dir="$res_dir/day"
+            if [ -d "$day_res_day_dir" ]; then
+              ln -s "$day_res_day_dir" "all_images/${day_name}_day"
+            fi
+
+            # 处理 Day**/res 路径 (将 Day**_res 格式用于此路径)
+            ln -s "$res_dir" "all_images/${day_name}_res"
+
           done
 
           #markdown_files=$(echo '${{ needs.find_markdown_files.outputs.markdown_files }}' | jq -r '.[]' | tr '\n' ' ')
@@ -81,7 +91,7 @@ jobs:
                  --metadata title="Combined Documentation" \
                  --resource-path="./all_images" \
                  --pdf-engine=xelatex \
-                 --from gfm+footnotes+autolink_bare_uris+emoji+header_attributes+inline_code_attributes+table+grid_tables+pipe_tables \
+                 --from markdown_github+footnotes+autolink_bare_uris+emoji+header_attributes+inline_code_attributes+table+grid_tables+pipe_tables \
                  --filter pandoc-crossref  \
                  --output combined.pdf Day01-20/01.初识Python.md # 使用单个文件测试
 
