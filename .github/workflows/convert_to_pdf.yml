@@ -81,7 +81,7 @@ jobs:
                  --metadata title="Combined Documentation" \
                  --resource-path="./all_images" \
                  --pdf-engine=xelatex \
-                 --from gfm+footnotes+autolink_bare_uris+emoji+header_attributes+inline_code_attributes+fenced_code_blocks+table+grid_tables+pipe_tables \
+                 --from gfm+footnotes+autolink_bare_uris+emoji+header_attributes+inline_code_attributes+table+grid_tables+pipe_tables \
                  --filter pandoc-crossref  \
                  --output combined.pdf Day01-20/01.初识Python.md # 使用单个文件测试
 
