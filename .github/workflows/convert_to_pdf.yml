@@ -91,8 +91,8 @@ jobs:
                  --metadata title="Combined Documentation" \
                  --resource-path="./all_images" \
                  --pdf-engine=xelatex \
-                 --from markdown+footnotes+autolink_bare_uris+emoji+header_attributes+inline_code_attributes+table+grid_tables+pipe_tables \
-                 --filter pandoc-crossref  \
+                 --from markdown \
+                 --filter pandoc-crossref \
                  --output combined.pdf Day01-20/01.初识Python.md
 
       - name: Upload Artifact
