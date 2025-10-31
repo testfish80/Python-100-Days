@@ -53,8 +53,8 @@ jobs:
           if [[ "$ARCH" == "x86_64" ]]; then
             ARCH="amd64"
           fi
-          PANDOC_CROSSREF_VERSION="0.3.16.0a" # 替换为最新的版本号  0.3.16.0a  0.3.22a
-          # https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.16.0a/pandoc-crossref-Linux.tar.xz
+          PANDOC_CROSSREF_VERSION="0.3.16.0a" # 替换为最新的版本号
+          # wget https://github.com/lierdakil/pandoc-crossref/releases/download/v${PANDOC_CROSSREF_VERSION}/pandoc-crossref-linux-$ARCH.tar.gz
           wget https://github.com/lierdakil/pandoc-crossref/releases/download/v${PANDOC_CROSSREF_VERSION}/pandoc-crossref-Linux.tar.xz
           tar -xf pandoc-crossref-Linux.tar.xz
           sudo mv pandoc-crossref /usr/local/bin/
@@ -81,7 +81,7 @@ jobs:
                  --metadata title="Combined Documentation" \
                  --resource-path="./all_images" \
                  --pdf-engine=xelatex \
-                 --from gfm+footnotes+autolink_bare_uris+emoji+header_attributes+inline_code_attributes+fenced_code_blocks+backtick_code_blocks+table+grid_tables+pipe_tables \
+                 --from gfm+footnotes+autolink_bare_uris+emoji+header_attributes+inline_code_attributes+fenced_code_blocks+table+grid_tables+pipe_tables \
                  --filter pandoc-crossref  \
                  --output combined.pdf Day01-20/01.初识Python.md # 使用单个文件测试
 
