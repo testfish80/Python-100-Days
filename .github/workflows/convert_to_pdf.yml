@@ -16,7 +16,7 @@ jobs:
         id: find_files
         run: |
           # 查找所有 Day 开头目录下的 .md 文件
-          files=$(find . -maxdepth 2 -type f -name "*.md" -path "./Day*" -print0 | xargs -0 -n 1 | jq -Rs 'split("\n")[:-1]')
+          files=$(find . -maxdepth 2 -type f -name "*.md" -path "Day*" -print0 | xargs -0 -n 1 | jq -Rs 'split("\n")[:-1]')
           echo "markdown_files=$files" >> $GITHUB_OUTPUT
           echo "::set-output name=markdown_files::$files"  
 
