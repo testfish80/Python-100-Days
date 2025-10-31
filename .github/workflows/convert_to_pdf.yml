@@ -53,8 +53,9 @@ jobs:
 
           # 修改 custom.tex 中的字体大小和对齐方式 (例如，使用 sed 替换)
           sed -i 's/\\documentclass\[\]\{article\}/\\documentclass\[12pt]\{extarticle\}/g' custom.tex
-          sed -i '/\\begin\{document\}/i\\usepackage\{ragged2e\}\\RaggedRight' custom.tex
-          sed -i '/\\documentclass\[12pt]\{extarticle\}/a\\usepackage\{url\}\\usepackage\{hyperref\}' custom.tex
+          sed -i '/\\begin{document}/i\\usepackage{ragged2e}\\RaggedRight' custom.tex
+          sed -i '/\\documentclass\[12pt]\{extarticle\}/a \\usepackage{url}\\usepackage{hyperref}' custom.tex
+
 
       - name: Install pandoc-crossref
         run: |
@@ -76,7 +77,7 @@ jobs:
           # Create a symlink to a common image directory
           mkdir -p all_images
 
-          find . -maxdepth 3 -type d -name "res" -path "./Day**/res" -print0 | while IFS= read -r -d $'\0' res_dir; do
+          find . -maxdepth 3 -type d -name "res" -path="./Day**/res" -print0 | while IFS= read -r -d $'\0' res_dir; do
             day_dir=$(dirname "$res_dir") # 获取 Day** 目录
             day_name=$(basename "$day_dir")  # 获取 Day**
 
