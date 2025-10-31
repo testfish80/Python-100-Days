@@ -1,12 +1,7 @@
 name: Docs to PDF
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'Day**/res/day**/**' # 监听所有 DayXX-YY 目录下的 res/day 目录
-      - 'Day**/*.md'       # 监听所有 DayXX-YY 目录下的 .md 文件
+  workflow_dispatch:
 
 jobs:
   converttopdf:
@@ -14,9 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory: ${{ fromJson('["Day01-20","Day21-30","Day31-35","Day46-60"]') }}  # 手动维护目录列表，根据实际情况调整
+        directory: ${{ steps.find_dirs.outputs.directories }} # 从步骤输出读取目录列表
     steps:
       - uses: actions/checkout@v3
+
+      - name: Find directories
+        id: find_dirs
+        run: |
+          # 查找根目录下所有以 Day 开头，并包含数字的目录
+          dirs=$(find . -maxdepth 1 -type d -name "Day*" | jq -R -s 'split("\n")[:-1]') # 提取目录列表并转换成 JSON 数组
+          echo "directories=$dirs" >> $GITHUB_OUTPUT
+          echo "::set-output name=directories::$dirs"  # 设置输出变量
 
       - name: Convert to PDF
         uses: baileyjm02/markdown-to-pdf@v1
