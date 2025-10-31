@@ -53,8 +53,10 @@ jobs:
           if [[ "$ARCH" == "x86_64" ]]; then
             ARCH="amd64"
           fi
-          PANDOC_CROSSREF_VERSION="0.3.22a" # 替换为最新的版本号
+          PANDOC_CROSSREF_VERSION="0.3.22a" # 替换为最新的版本号  0.3.16.0a  
           #  https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.22a/pandoc-crossref-Linux-X64.tar.xz
+          # 0.3.16.0a
+          # https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.16.0a/pandoc-crossref-Linux.tar.xz
           wget https://github.com/lierdakil/pandoc-crossref/releases/download/v${PANDOC_CROSSREF_VERSION}/pandoc-crossref-Linux-X64.tar.xz
           tar -xf pandoc-crossref-Linux-X64.tar.xz
           sudo mv pandoc-crossref /usr/local/bin/
