@@ -46,6 +46,7 @@ jobs:
           sudo apt-get install pandoc
           sudo apt-get install texlive-xetex # Required for PDF generation with Chinese characters and correct font handling
           sudo apt-get install texlive-latex-extra  # Install additional LaTeX packages
+          sudo apt-get install fonts-wqy-zenhei # Install WenQuanYi Zen Hei font
 
       - name: Install pandoc-crossref
         run: |
@@ -93,6 +94,7 @@ jobs:
                  --pdf-engine=xelatex \
                  --from markdown \
                  --filter pandoc-crossref \
+                 --variable mainfont="WenQuanYi Zen Hei" \
                  --output combined.pdf Day01-20/01.初识Python.md
 
       - name: Upload Artifact
