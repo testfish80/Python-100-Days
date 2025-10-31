@@ -82,13 +82,19 @@ jobs:
             # 处理 Day**/res/day 路径
             day_res_day_dir="$res_dir/day"
             if [ -d "$day_res_day_dir" ]; then
-              ln -s "$day_res_day_dir" "all_images/${day_name}_day"
+              # 遍历 day 目录下的所有目录，创建符号链接
+              find "$day_res_day_dir" -maxdepth 1 -type d | while IFS= read -r day_xx_dir; do
+                day_xx_name=$(basename "$day_xx_dir")
+                ln -s "$day_xx_dir" "all_images/${day_name}_${day_xx_name}"
+              done
             fi
 
             # 处理 Day**/res 路径 (将 Day**_res 格式用于此路径)
             ln -s "$res_dir" "all_images/${day_name}_res"
 
           done
+
+          ls -lR all_images  # 输出 all_images 目录结构
 
           #markdown_files=$(echo '${{ needs.find_markdown_files.outputs.markdown_files }}' | jq -r '.[]' | tr '\n' ' ')
           #echo "Markdown files to merge: $markdown_files"
