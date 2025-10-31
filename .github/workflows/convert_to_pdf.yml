@@ -4,12 +4,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  converttopdf:
-    name: Build PDF for ${{ matrix.directory }}
+  find_directories:
+    name: Find Directories
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        directory: ${{ steps.find_dirs.outputs.directories }} # 从步骤输出读取目录列表
+    outputs:
+      directories: ${{ steps.find_dirs.outputs.directories }}
     steps:
       - uses: actions/checkout@v3
 
@@ -20,6 +19,16 @@ jobs:
           dirs=$(find . -maxdepth 1 -type d -name "Day*" | jq -R -s 'split("\n")[:-1]') # 提取目录列表并转换成 JSON 数组
           echo "directories=$dirs" >> $GITHUB_OUTPUT
           echo "::set-output name=directories::$dirs"  # 设置输出变量
+
+  converttopdf:
+    name: Build PDF for ${{ matrix.directory }}
+    needs: find_directories  # 依赖于 find_directories job
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: ${{ fromJson(needs.find_directories.outputs.directories) }} # 从 find_directories job 的输出读取目录列表，并转换为 JSON 数组
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Convert to PDF
         uses: baileyjm02/markdown-to-pdf@v1
