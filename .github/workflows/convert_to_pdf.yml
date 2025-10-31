@@ -44,6 +44,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install pandoc
+          sudo apt-get install texlive-xetex # Required for PDF generation with Chinese characters and correct font handling
+          sudo apt-get install texlive-latex-extra  # Install additional LaTeX packages
+          sudo apt-get install pandoc-crossref
 
       - name: Create Symlink for Images & Merge Markdown Files
         id: merge_files
@@ -58,18 +61,20 @@ jobs:
 
           markdown_files=$(echo '${{ needs.find_markdown_files.outputs.markdown_files }}' | jq -r '.[]' | tr '\n' ' ')
           echo "Markdown files to merge: $markdown_files"
-          pandoc $markdown_files -o combined.md
 
-      - name: Convert to PDF
-        uses: baileyjm02/markdown-to-pdf@v1
-        with:
-          input_path: combined.md
-          output_dir: pdfs
-          image_import: ./all_images  # Important! Relative path to the symlinked images
-          build_html: false
+          # Pandoc 命令，添加书签功能
+          pandoc --toc \
+                 --toc-depth=2 \
+                 --metadata title="Combined Documentation" \
+                 --resource-path="./all_images" \
+                 --pdf-engine=xelatex \
+                 --from markdown+footnotes+autolink_bare_uris+emoji+header_attributes+inline_code_attributes+fenced_code_blocks+backtick_code_blocks+table+grid_tables+pipe_tables \
+                 --filter pandoc-crossref  \
+                 --output combined.pdf $markdown_files
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ordered-docs
-          path: pdfs
+          path: combined.pdf # Directly upload the PDF
+
