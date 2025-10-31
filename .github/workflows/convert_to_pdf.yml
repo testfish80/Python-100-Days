@@ -15,10 +15,18 @@ jobs:
       - name: Find Markdown files
         id: find_files
         run: |
-          # 查找所有 Day 开头目录下的 .md 文件，并移除 "./" 前缀
-          files=$(find . -maxdepth 2 -type f -name "*.md" -path "./Day*" -print0 | xargs -0 -n 1 | jq -Rs 'split("\n")[:-1] | map(ltrimstr("./"))')
-          echo "markdown_files=$files" >> $GITHUB_OUTPUT
-          echo "::set-output name=markdown_files::$files"  # 设置输出变量
+          # 查找所有 Day 开头目录下的 .md 文件
+          files=($(find . -maxdepth 2 -type f -name "*.md" -path "./Day*"))
+          # 构建不带 './' 前缀的 JSON 数组字符串
+          output="["
+          for file in "${files[@]}"; do
+            file=${file#./}  # Remove "./" prefix
+            output+=\"${file}\","
+          done
+          output="${output%,}"  # Remove trailing comma
+          output+="]"
+          echo "markdown_files=$output" >> $GITHUB_OUTPUT
+          echo "::set-output name=markdown_files::$output"  # 设置输出变量
 
   converttopdf:
     name: Build PDF for ${{ matrix.file }}
@@ -33,10 +41,10 @@ jobs:
       - name: Convert to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
-          input_file: ${{ matrix.file }}        
+          input_file: ${{ matrix.file }}        #  md 文件路径
           output_dir: pdfs # PDF 输出到 pdfs 目录
-          # images_dir: ${{ matrix.directory }}/res/day** 
-          image_import: ./res/day**/**        
+          # images_dir: ${{ matrix.directory }}/res/day  #  不再需要目录
+          image_import: ./res/day         # Markdown 文件中图片引用路径不变
           build_html: false
 
       - uses: actions/upload-artifact@v3
