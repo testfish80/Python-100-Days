@@ -1,31 +1,32 @@
-# .github/workflows/convert-to-pdf.yml
-
 name: Docs to PDF
-# This workflow is triggered on pushes to the repository.
+
 on:
   push:
     branches:
       - main
-    # Paths can be used to only trigger actions when you have edited certain files, such as a file within the /docs directory
     paths:
-      - 'Day**/**.md'
-      - 'Day**/res/day**/**'
+      - 'Day**/res/day**/**' # 监听所有 DayXX-YY 目录下的 res/day 目录
+      - 'Day**/*.md'       # 监听所有 DayXX-YY 目录下的 .md 文件
 
 jobs:
   converttopdf:
-    name: Build PDF
+    name: Build PDF for ${{ matrix.directory }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: ${{ fromJson('["Day01-20","Day21-30","Day31-35","Day46-60"]') }}  # 手动维护目录列表，根据实际情况调整
     steps:
       - uses: actions/checkout@v3
-      - uses: baileyjm02/markdown-to-pdf@v1
+
+      - name: Convert to PDF
+        uses: baileyjm02/markdown-to-pdf@v1
         with:
-          input_dir: docs
-          output_dir: pdfs
-          images_dir: docs/images
-          # for example <img src="./images/file-name.png">
-          image_import: ./images
-          # Default is true, can set to false to only get PDF files
+          input_dir: ${{ matrix.directory }}        # 直接使用根目录下的目录名
+          output_dir: pdfs/${{ matrix.directory }} # PDF 输出到 pdfs/DayXX-YY 目录
+          images_dir: ${{ matrix.directory }}/res/day # 图片目录在 DayXX-YY/res/day
+          image_import: ./res/day           # Markdown 文件中图片引用路径不变
           build_html: false
+
       - uses: actions/upload-artifact@v3
         with:
           name: docs
