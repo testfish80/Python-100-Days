@@ -51,7 +51,9 @@ jobs:
           # Create a symlink to a common image directory
           mkdir -p all_images
           find . -maxdepth 2 -type d -name "day" -path "./Day**/res/day" -print0 | while IFS= read -r -d $'\0' dir; do
-            ln -s "$dir" "all_images/$(basename "$dir")"
+            day_dir=$(dirname "$(dirname "$dir")") # 获取 Day**/res 目录
+            day_name=$(basename "$day_dir")        # 获取 Day**
+            ln -s "$dir" "all_images/${day_name}_day" # 创建符号链接，名称为 Day**_day
           done
 
           markdown_files=$(echo '${{ needs.find_markdown_files.outputs.markdown_files }}' | jq -r '.[]' | tr '\n' ' ')
@@ -63,7 +65,7 @@ jobs:
         with:
           input_path: combined.md
           output_dir: pdfs
-          image_import: ./all_images # Important!  Relative path to the symlinked images
+          image_import: ./all_images  # Important! Relative path to the symlinked images
           build_html: false
 
       - name: Upload Artifact
