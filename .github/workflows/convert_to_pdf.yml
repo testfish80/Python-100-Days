@@ -20,8 +20,11 @@ jobs:
           # 构建不带 './' 前缀的 JSON 数组字符串
           output="["
           for file in "${files[@]}"; do
-            file=${file#./}  # Remove "./" prefix
-            output+=\"${file}\","
+            # Remove "./" prefix
+            file=${file#./}
+            # Escape double quotes within the filename (if any)
+            file=${file//\"/\\\"}
+            output+="\"${file}\","
           done
           output="${output%,}"  # Remove trailing comma
           output+="]"
