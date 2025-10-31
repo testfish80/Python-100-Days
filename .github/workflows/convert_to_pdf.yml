@@ -54,7 +54,7 @@ jobs:
             ARCH="amd64"
           fi
           PANDOC_CROSSREF_VERSION="0.3.22a" # 替换为最新的版本号
-          wget https://github.com/lierdakil/pandoc-crossref/releases/download/v${PANDOC_CROSSREF_VERSION}/pandoc-crossref-linux-$ARCH.tar.gz
+          wget https://github.com/lierdakil/pandoc-crossref/releases/download/v${PANDOC_CROSSREF_VERSION}/pandoc-crossref-Linux-X64.tar.gz
           tar -xzf pandoc-crossref-linux-$ARCH.tar.gz
           sudo mv pandoc-crossref /usr/local/bin/
           chmod +x /usr/local/bin/pandoc-crossref
